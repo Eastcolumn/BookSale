@@ -1,0 +1,264 @@
+package bookTrade;
+import java.util.Scanner;
+
+public class Controller {
+	Book book = new Book();
+	BookList bookList = new BookList();
+	Admin admin = new Admin();
+	User user = new User();
+	UserList userList = new UserList();
+	View view = new View(book, bookList, admin, user, userList);
+	Scanner scan = new Scanner(System.in);
+	
+	public Controller() {
+		view.controller = this;
+	}
+
+	// user
+	public void front() {
+		view.front();
+	}
+
+	public void frontInput(String select) {
+		if (select.equals("1") == true) {
+			loginInput();
+		} else if (select.equals("2") == true) {
+			view.joinInput();
+		} else {
+			view.error();
+			front();
+		}
+	}
+
+	public void join(String id, String password, String name, String phoneNumber, String email) {
+		if (id.equals("admin")) {
+			view.joinFailAdmin();
+			view.front();
+		}else if(!id.equals("")&&userList.checkID(id)==true) {
+			userList.join(id, password, name, phoneNumber, email);
+			view.join();
+		}
+		else if(id.equals("")){
+			view.joinFailID();
+			view.front();
+		}else {
+			view.joinFailID();
+			view.front();
+		}
+
+	}
+
+	public void loginInput() {
+		view.loginInput();
+	}
+
+	public void login(String id, String password) {
+		if (id.equals(admin.id) && password.equals(admin.password)) {
+			user.id = admin.id;
+			view.adminMenu();
+		} else {
+			if (userList.login(id, password)) {
+				user.id = id;
+				user.email = userList.getEmail(id);
+				view.menu();
+			} else{
+				view.loginFail();
+				view.front();
+			}
+		}
+	}
+
+	public void menu(String select) {
+		if (select.equals("1")) {
+			view.search();
+		} else if (select.equals("2")) {
+			view.register();
+		} else if (select.equals("3")) {
+			view.myList();
+		} else if (select.equals("4")) {
+			logout();
+		} else {
+			view.error();
+			view.menu();
+		}
+	}
+
+	public void search(String select, String input) {
+		if (select.equals("1")) {
+			bookList.searchTitle(input);
+			view.searchListView(bookList.searchList);
+		} else if (select.equals("2")) {
+			bookList.searchISBN(input);
+			view.searchListView(bookList.searchList);
+		} else if (select.equals("3")) {
+			bookList.searchAuthor(input);
+			view.searchListView(bookList.searchList);
+		} else if (select.equals("4")) {
+			bookList.searchID(input);
+			view.searchListView(bookList.searchList);
+		} else if (select.equals("5")) {
+			view.menu();
+		} else {
+			view.error();
+			view.search();
+		}
+
+		if ((user.id).equals("admin")) {
+			view.searchAfterAdmin();
+		} else {
+			view.searchAfter();
+		}
+
+	}
+	//year체크 검토&&book.checkYear(year), isbn &&book.checkISBN(ISBN), price
+	public void register(String title, String publisher, String ISBN, String author, String year, String price, String quality) {
+		
+		if(book.checkLength(title)&&book.checkTitle(title)&&book.checkLength(author)&&book.checkLength(publisher)&&book.checkquality(quality)){
+			bookList.insertBook(title, publisher, ISBN, author, year, price, quality, user.id);
+			view.registerOK();
+			view.menu();
+		}
+		else{
+			view.error();
+			view.menu();
+		}
+
+	}
+
+	public void buy(String bookindex) {
+		String sellerID;
+		sellerID = bookList.buyBook(bookindex);
+		String selleremail = userList.getEmail(sellerID);
+		view.buy(selleremail, user.email);
+	}
+	
+	public void myListOpen() {
+		bookList.searchID(user.id);
+		view.searchListView(bookList.searchList);
+		view.myListDo();
+	}
+	
+	public void myListDo(String select) {
+		if (select.equals("1")) {
+			view.modify();
+			view.myList();
+		} else if (select.equals("2")) {
+			view.delete();
+			view.myList();
+
+		} else if (select.equals("3")) {
+			view.menu();
+		} else {
+			view.error();
+			view.myList();
+		}
+	}
+
+	public void modify(String select, String title, String publisher, String author, String ISBN, String year,
+			String price, String quality) {
+		int selectInt = Integer.parseInt(select);
+
+		Book modifybook = bookList.searchList.get(selectInt);
+
+		bookList.modifyBook(modifybook, title, publisher, author, ISBN, year, price, quality, user.id);
+
+		bookList.searchID(user.id);
+	}
+
+	public void delete(String index) {
+		int indexInt = Integer.parseInt(index);
+		bookList.deleteBook(bookList.bookList.get(indexInt));
+		bookList.searchID(user.id);
+		if ((user.id).equals("admin")) {
+			view.searchAfterAdmin();
+		} else {
+			view.myList();
+		}
+	}
+
+	public void searchAfterSelect(String select) {
+		String bookindex;
+
+		if(select.equals("1")) {
+			System.out.println("구매할 책의 index");
+			bookindex=scan.nextLine();
+			buy(bookindex);
+		}
+		else if(select.equals("2")){
+			view.menu();
+		}
+		else
+		{
+			System.out.println("잘못된 입력입니다, 다시 입력하세요");
+			view.searchAfter();
+		}
+	}
+	
+	public void logout() {
+		user.id = null;
+		user.email = null;
+		view.front();
+	}
+
+	public void adminMenu(String select) {
+		if (select.equals("1")) {
+			view.search();
+		} else if (select.equals("2")) {
+			view.userListView();
+			userList.printUser();
+			view.userListMenu();
+		} else if (select.equals("3")) {
+			view.front();
+		} else {
+			view.error();
+			view.adminMenu();
+		}
+	}
+
+	public void userListDo(String select) {
+		if (select.equals("1")) {
+			view.deleteUser();
+			view.userListMenu();
+		} else if (select.equals("2")) {
+			view.toggleUser();
+		} else if (select.equals("3")) {
+			view.adminMenu();
+		} else {
+			System.out.println("잘못된 입력입니다, 다시 입력하세요");
+			view.userListMenu();
+		}
+	}
+
+	public void deleteUser(String index) {
+		int indexInt = Integer.parseInt(index);
+		userList.deleteUser(userList.UserList.get(indexInt));
+		view.userListView();
+		userList.printUser();
+		view.userListMenu();
+	}
+
+	public void toggleUser(String index) {
+		int indexInt = Integer.parseInt(index);
+		userList.toggleState(userList.UserList.get(indexInt));
+		view.userListView();
+		userList.printUser();
+		view.userListMenu();
+	}
+
+	public void searchAfterAdmin(String select) {
+		if (select.equals("1")) {
+			view.delete();
+		} else if (select.equals("2")) {
+			view.adminMenu();
+		} else {
+			System.out.println("잘못된 입력입니다, 다시 입력하세요");
+			view.userListMenu();
+		}
+		
+	}
+
+	
+	
+	
+	
+}

@@ -1,0 +1,133 @@
+package bookTrade.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import controller.Controller;
+import model.Admin;
+import model.Book;
+import model.BookDBMS;
+import model.User;
+import model.UserDBMS;
+import view.View;
+
+public class ControllerTest {
+	
+	Book book = null;
+	BookDBMS bookList = null;
+	Admin admin = null;
+	User user = null;
+	UserDBMS userList = null;
+	View view = new View(book, bookList, admin, user, userList);
+	Controller controller = new Controller();
+	
+	
+	@Test
+	public void testController() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testFront() {
+		controller.front();
+		assertNull(bookList);
+		assertNull(userList);
+	}
+
+	@Test
+	public void testFrontInput() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testJoin() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testLoginInput() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testLogin() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testMenu() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testRegister() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testBuy() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testMyListOpen() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testMyListDo() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testModify() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testDelete() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testSearch() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testSearchAfterSelect() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testLogout() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testAdminMenu() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testUserListDo() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testDeleteUser() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testToggleUser() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testSearchAfterAdmin() {
+		fail("Not yet implemented");
+	}
+
+}

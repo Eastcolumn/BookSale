@@ -1,0 +1,75 @@
+package bookTrade;
+
+public class Book {
+	public Book() {
+		
+	}
+	public String title;
+	public String publisher;
+	public String author;
+	public String ISBN;
+	public String year;
+	public String price;
+	public String quality;
+	public String userId;	
+	//예외처리 책 입력값들
+	public boolean checkTitle(String title) {
+		if(title.length()==0)
+			return false;
+		return true;
+	}
+	
+	public boolean checkLength(String name) {
+		if(name.length()>10)
+			return false;
+		return true;
+		//책 제목, 저자, 출판사 이름이 너무 길 경우 false
+	}
+	
+	public boolean checkISBN(String ISBN) {
+		for(int i=0; i<ISBN.length(); i++) {
+			char temp = ISBN.charAt(i);
+			if(temp<'0'||temp<'9'||temp!='-') {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		return true;
+		//isbn이 숫자와 -로 구성되지 않으면 false
+	}
+	public boolean checkYear(String year) {
+		for(int i=0; i<year.length(); i++) {
+			char temp = year.charAt(i);
+			if(temp<'0'||temp<'9'||temp=="") {
+				return false;
+			}
+		}
+		
+		int yearInt = Integer.parseInt(year);
+		if(yearInt>1500&&yearInt<2021) {
+			return true;
+		}
+		return true;
+	}
+	public boolean checkPrice(String price) {
+		for(int i=0; i<price.length(); i++) {
+			char temp = price.charAt(i);
+			if(temp>'0'||temp<'9') {
+				int priceInt = Integer.parseInt(price);
+				if(priceInt>0&&priceInt<1000000000) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public boolean checkquality(String quality) {
+		if(quality.equals("Excellent")||quality.equals("Good")||quality.equals("Fair")||quality.equals("")) {
+			return true;
+		}
+		return false;
+	}
+	
+}

@@ -1,0 +1,25 @@
+package bookTrade;
+
+import java.io.IOException;
+
+import model.Admin;
+import model.Book;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		Book book = null;
+		BookList bookList = null;
+		Admin admin = null;
+		User user = null;
+		UserList userList = null;
+		View view = new View(book, bookList, admin, user, userList);
+		Controller controller = new Controller();
+		
+		controller.front();
+		
+		
+	}
+
+}

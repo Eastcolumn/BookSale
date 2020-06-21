@@ -1,0 +1,298 @@
+package bookTrade;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+
+public class View {
+	Controller controller;
+	Book book;
+	BookList bookList;
+	Admin admin;
+	User user;
+	UserList userList;
+	Scanner scan = new Scanner(System.in);
+
+	View(Book book, BookList bookList, Admin admin, User user, UserList userList){
+		this.book = book;
+		this.bookList = bookList;
+		this.admin = admin;
+		this.user = user;
+		this.userList = userList;
+	}
+	
+	
+	public void front() {
+		String select;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("환영합니다. 하고자하는 작업의 번호를 눌러주세요");
+		System.out.println("1. login");
+		System.out.println("2. join");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		controller.joinInput(select);
+	}
+	
+	public void loginInput() {
+		String id, password;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("ID를 입력하세요");
+		id=scan.nextLine();
+		System.out.println("password를 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		password=scan.nextLine();
+		controller.login(id, password);
+	}
+	
+	public void joinInput() {
+		String id, password, name, phoneNumber, email;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("ID를 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		id=scan.nextLine();
+		//user.id=id;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("비밀번호를 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		password=scan.nextLine();
+		//user.password=password;
+		//userList.UserList.add(user);
+		//System.out.println("정상 회원가입 id:"+user.id+"비밀번호 :"+user.password);
+		System.out.println("----------------------------------------------------------");
+		System.out.println("이름을 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		name=scan.nextLine();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("전화번호를 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		phoneNumber=scan.nextLine();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("이메일을 입력하세요");
+		System.out.println("----------------------------------------------------------");
+		email=scan.nextLine();
+		controller.join(id, password, name, phoneNumber, email);
+	}
+	
+	public void loginFail() {
+		// TODO Auto-generated method stub
+		System.out.println("----------------------------------------------------------");
+		System.out.println("로그인이 실패하였습니다. 첫 화면으로 돌아갑니다.");
+		System.out.println("----------------------------------------------------------");
+		controller.front();
+	}
+	public void join() {
+		System.out.println("----------------------------------------------------------");
+		System.out.println("성공적으로 회원가입되었습니다.");
+		System.out.println("----------------------------------------------------------");
+		controller.front();
+
+	}
+
+	public void menu() {
+		String select;
+		System.out.println("-------------------||   MENU   ||--------------------------");
+		System.out.println("원하는 작업을 선택해 주세요");
+		System.out.println("1.책 검색");
+		System.out.println("2.책 등록하기");
+		System.out.println("3.내 리스트 보기");
+		System.out.println("4.로그아웃");
+		System.out.println("----------------------------------------------------------");
+
+		select=scan.nextLine();
+		controller.menu(select);
+	}
+	
+	public void adminMenu() {
+		System.out.println("----------------------------------------------------------");
+		System.out.println("관리자 모드로 실행합니다.");
+		String select;
+		System.out.println("무엇을 도와드릴까요");
+		System.out.println("1.책 검색");
+		System.out.println("2. 유저리스트 보기");
+		System.out.println("3. 로그아웃");
+		System.out.println("----------------------------------------------------------");
+
+		select=scan.nextLine();
+		controller.adminMenu(select);
+	}
+	public void search() {
+		String select;
+		String input="";
+		System.out.println("----------------------------------------------------------");
+		System.out.println("어떤 방법으로 검색하시겠습니까?(번호 입력)");
+		System.out.println("1.제목");
+		System.out.println("2.ISBN");
+		System.out.println("3.저자");
+		System.out.println("4.판매자id");
+		System.out.println("5.메뉴로 돌아가기");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		if(select.equals("5")){
+			controller.search(select,input);
+		}
+		else {
+			System.out.println("검색할 단어를 입력해 주세요");
+			input=scan.nextLine();
+			System.out.println("| index |     title     |    publisher    |   author   | year |  price  |  quality  |");
+			controller.search(select, input);
+		}
+
+	}
+	
+	public void searchAfter() {
+		String select;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("원하시는 작업을 골라주세요");
+		System.out.println("1. 책 구입");
+		System.out.println("2. 메뉴로 돌아가기");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		controller.searchAfterSelect(select);
+		
+		
+	}
+	public void searchAfterAdmin() {
+		String select;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("어떤 작업을 하시겠습니까?");
+		System.out.println("1.책 삭제");
+		System.out.println("2. 메뉴로 돌아가기");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		controller.searchAfterAdmin(select);
+	}
+	
+	
+	public void register() {
+		String title, publisher, ISBN, author, year, price, quality;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("등록할 책 이름을 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		title=scan.nextLine();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("등록할 책의 출판사를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		publisher=scan.nextLine();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("등록할 책의 ISBN 번호를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		ISBN=scan.nextLine();
+		System.out.println("등록할 책 저자를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		author=scan.nextLine();
+		System.out.println("등록할 책의 출판년도를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		year=scan.nextLine();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("등록할 책의 가격을 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		price=scan.nextLine();
+		System.out.println("등록할 책 상태를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		quality=scan.nextLine();
+		controller.register(title, publisher, ISBN, author, year, price, quality);
+	}
+
+	public void buy(String selleremail, String customeremail) {
+		System.out.println("----------------------------------------------------------");
+		System.out.println(customeremail+"에서");
+		System.out.println(selleremail+"에게 구입 의사를 담은 이메일이 갔습니다. 메뉴로 돌아갑니다.");
+		System.out.println("----------------------------------------------------------");
+		menu();
+
+	}
+	public void myList() {		
+		System.out.println("| index |     title     |    publisher    |   author   | year |  price  |  quality  |");
+		controller.myListOpen();
+	}
+	
+	public void myListDo() {
+		String input;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("원하시는 작업을 선택해주세요");
+		System.out.println("1. 책 수정");
+		System.out.println("2. 책 삭제");
+		System.out.println("3. 메뉴로 돌아가기");
+		System.out.println("----------------------------------------------------------");
+
+
+		input=scan.nextLine();
+		controller.myListDo(input);
+
+	}
+	public void modify() {
+		String select;
+		String title;
+		String publisher;
+		String author;
+		String ISBN;
+		String year;
+		String price;
+		String quality;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("수정할 책의 index를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		System.out.println("수정할 책의 제목을 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		title=scan.nextLine();
+		publisher=scan.nextLine();
+		System.out.println("저자:");
+		author=scan.nextLine();
+		System.out.println("ISBN:");
+		ISBN=scan.nextLine();
+		System.out.println("년도:");
+		year=scan.nextLine();
+		System.out.println("가격");
+		price=scan.nextLine();
+		System.out.println("품질");
+		quality=scan.nextLine();
+		controller.modify(select, title, publisher, author, ISBN, year, price, quality);
+		
+	}
+	
+	public void delete() {
+		String index;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("삭제할 책의 index를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		index=scan.nextLine();
+		controller.delete(index);
+	}
+
+	public void userListMenu() {
+		String select;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("어떤 작업을 하시겠습니까");
+		System.out.println("1. 사용자 삭제");
+		System.out.println("2. 사용자 상태 전환");
+		System.out.println("3. 메뉴로 돌아가기");
+		System.out.println("----------------------------------------------------------");
+		select=scan.nextLine();
+		controller.userListDo(select);
+	}
+	public void deleteUser() {
+		String index;		
+		System.out.println("----------------------------------------------------------");
+		System.out.println("삭제할 유저의 index를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		index=scan.nextLine();
+		controller.deleteUser(index);
+	}
+	public void toggleUser() {
+		String index;
+		System.out.println("----------------------------------------------------------");
+		System.out.println("상태를 바꿀 유저의 index를 입력해주세요");
+		System.out.println("----------------------------------------------------------");
+		index=scan.nextLine();
+		controller.toggleUser(index);
+	}
+
+	public void searchListView(List<Book> searchList) {
+		for(int i = 0; i<searchList.size(); i++) {
+			System.out.println("| "+i+" |     "+searchList.get(i).title+"     |    "+searchList.get(i).publisher+"    |   "+searchList.get(i).author+"   | "+searchList.get(i).year+" |  "+searchList.get(i).price+"  |  "+searchList.get(i).quality+"  |");
+		}		
+	}
+
+
+	
+}

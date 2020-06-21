@@ -1,0 +1,28 @@
+package bookTrade;
+
+import java.io.IOException;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		Book book = null;
+		BookList bookList = null;
+		Admin admin = null;
+		User user = null;
+		UserList userList = null;
+		View view = new View(book, bookList, admin, user, userList);
+		Controller controller = new Controller();
+		
+		try {
+			bookList.saveDB();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		controller.front();
+		
+		
+	}
+
+}

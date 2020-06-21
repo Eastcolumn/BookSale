@@ -1,0 +1,30 @@
+package main;
+
+import java.io.IOException;
+
+import View.View;
+import controller.Controller;
+import model.Admin;
+import model.Book;
+import model.BookList;
+import model.User;
+import model.UserList;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		Book book = null;
+		BookList bookList = null;
+		Admin admin = null;
+		User user = null;
+		UserList userList = null;
+		View view = new View(book, bookList, admin, user, userList);
+		Controller controller = new Controller();
+		
+		controller.front();
+		
+		
+	}
+
+}

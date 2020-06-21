@@ -1,0 +1,17 @@
+package bookTrade.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import controller.Controller;
+
+public class controllerTest {
+
+	@Test
+	public void testFront() throws Exception{
+		
+		assertEquals(1,1);
+		fail("Not yet implemented");
+	}
+
+}

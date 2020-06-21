@@ -1,0 +1,41 @@
+package bookTrade.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import controller.Controller;
+import model.Admin;
+import model.Book;
+import model.BookDBMS;
+import model.User;
+import model.UserDBMS;
+import view.View;
+
+public class controllerTest {
+	
+	
+	Book book = null;
+	BookDBMS bookList = null;
+	Admin admin = null;
+	User user = null;
+	UserDBMS userList = null;
+	View view = new View(book, bookList, admin, user, userList);
+	Controller controller = new Controller();	
+	
+	@Test
+	
+	public void testFront(){
+		//확실히 arraylist를 받아오는지 확인
+		controller.front();
+		assertNotNull("fuck", bookList);
+		
+	}
+
+	@Test
+	public void testjoin(){
+		//확실히 arraylist를 받아오는지 확인
+		controller.join("admin","1","1","1","1");
+		assertEquals("admin",user.getId());
+		
+	}
+}

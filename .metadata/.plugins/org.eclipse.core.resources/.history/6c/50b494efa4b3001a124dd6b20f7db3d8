@@ -1,0 +1,183 @@
+package controller;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
+
+import model.Book;
+
+public class ListController {
+	
+}
+
+class bookController extends ListController {
+	
+	public void insertBook(String title, String publisher, String ISBN, String author, String year, String price, String quality, String userId) {
+		Book newBook = new Book();
+		newBook.setTitle(title);
+		newBook.setPublisher(publisher);
+		newBook.setAuthor(author);
+		newBook.setISBN(ISBN);
+		newBook.setYear(year);
+		newBook.setPrice(price);
+		newBook.setQuality(quality);
+		newBook.setUserId(userId);
+		bookList.add(newBook);
+	}
+	
+	public void searchTitle(String title) {
+		searchList.clear();
+		//모든 조건 다 입력시 검색기능임(하나 하는 오버로딩 구현 안된 상태)
+		for(int i=0; i<bookList.size(); i++) {
+			if(title.equals(bookList.get(i).getTitle())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	
+	public void searchID(String id) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(id.equals(bookList.get(i).getUserId())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	
+	public void searchISBN(String ISBN) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(ISBN.equals(bookList.get(i).getISBN())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	public void searchAuthor(String author) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(author.equals(bookList.get(i).getAuthor())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	public void searchPublisher(String publisher) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(publisher.equals(bookList.get(i).getPublisher())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	public void searchYear(String year) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(year.equals(bookList.get(i).getYear())) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+
+
+	
+	public void modifyBook(Book modifyBook, String title, String publisher, String author, String ISBN, String year, String price, String quality, String userid) {
+		
+		Book tempBook = new Book();
+		
+//수정 필요!!!!!!!!!!!!!!!!!!!!!!!
+		tempBook.setTitle(title);
+		tempBook.setPublisher(publisher);
+		tempBook.setAuthor(author);
+		tempBook.setISBN(ISBN);
+		tempBook.setYear(year);
+		tempBook.setPrice(price);
+		tempBook.setQuality(quality);
+		tempBook.setUserId(userid);
+
+		bookList.set(bookList.indexOf(modifyBook), tempBook);
+
+	}
+	
+	
+	public String buyBook(String bookindex) {
+		int temp = Integer.parseInt(bookindex);
+		String sellerID=searchList.get(temp).getUserId();
+		return sellerID;
+	}
+	
+	
+	public void deleteBook(Book deleteBook) {
+		bookList.remove(deleteBook);
+	}
+
+
+	public boolean indexValid(String index, List<Book> bookList) {
+		int okay=0;
+		if(index.equals("\n")){
+			return true;
+		}
+		else if(index.length()==0) {
+			return false;
+		}
+		for(int i=0; i<index.length(); i++) {
+			char temp = index.charAt(i);
+			if('0'<=temp&&temp<='9') {
+			}else {
+				okay++;
+			}
+		}
+		if(okay==0) {
+			int indexInt = Integer.parseInt(index);
+			if(bookList.size()-1<indexInt) {
+				return false;
+		}
+		else {
+			return true;
+		}	
+	}
+	return false;
+}
+
+	
+	//책 중복 시
+	//자신의 booklist는 id로 검색된결과이다.
+
+	public void deleteBookList(List<Book> bookList, List<Book> searchList) {
+		// TODO Auto-generated method stub
+		bookList.removeAll(searchList);
+	}
+	
+	
+	
+	public static void conductSerializing() {
+		try {
+			FileOutputStream fos = new FileOutputStream(BOOKLIST);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			
+			out.writeObject(bookList);
+			out.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public static void conductDeserializing() {
+		try {
+			FileInputStream fis = new FileInputStream(BOOKLIST);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ObjectInputStream in = new ObjectInputStream(bis);
+			
+			bookList = (List<Book>)in.readObject();
+
+			in.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+}

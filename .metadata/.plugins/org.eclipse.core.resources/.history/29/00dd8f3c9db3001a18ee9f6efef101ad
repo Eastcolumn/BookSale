@@ -1,0 +1,112 @@
+package bookTrade;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import model.Book;
+
+
+public class BookList {
+	public BookList(){
+	}
+	public List<Book> bookList = new ArrayList<Book>();
+	public List<Book> searchList = new ArrayList<Book>();
+	public void insertBook(String title, String publisher, String ISBN, String author, String year, String price, String quality, String userId) {
+		Book newBook = new Book();
+		newBook.title=title;
+		newBook.publisher=publisher;
+		newBook.author=author;
+		newBook.ISBN=ISBN;
+		newBook.year=year;
+		newBook.price=price;
+		newBook.quality=quality;
+		newBook.userId=userId;
+		bookList.add(newBook);
+
+	}
+	
+	public void searchTitle(String title) {
+		searchList.clear();
+		//모든 조건 다 입력시 검색기능임(하나 하는 오버로딩 구현 안된 상태)
+		for(int i=0; i<bookList.size(); i++) {
+			if(title.equals(bookList.get(i).title)) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	
+	public void searchID(String id) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(id.equals(bookList.get(i).userId)) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	
+	public void searchISBN(String ISBN) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(ISBN.equals(bookList.get(i).ISBN)) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+	public void searchAuthor(String author) {
+		searchList.clear();
+		for(int i=0; i<bookList.size(); i++) {
+			if(author.equals(bookList.get(i).author)) {
+				searchList.add(bookList.get(i));
+			}
+		}
+	}
+
+	
+	
+	
+	
+	public void modifyBook(Book modifyBook, String title, String publisher, String author, String ISBN, String year, String price, String quality, String userid) {
+		
+		Book tempBook = new Book();
+		
+//수정 필요!!!!!!!!!!!!!!!!!!!!!!!
+		tempBook.title=title;
+		tempBook.publisher=publisher;
+		tempBook.author=author;
+		tempBook.ISBN=ISBN;
+		tempBook.year=year;
+		tempBook.price=price;
+		tempBook.quality=quality;
+		tempBook.userId=userid;
+
+		bookList.set(bookList.indexOf(modifyBook), tempBook);
+		System.out.println("수정 완료");
+
+	}
+	
+	
+	public String buyBook(String bookindex) {
+		int bookind = Integer.parseInt(bookindex);
+		String sellerID=searchList.get(bookind).userId;
+		return sellerID;
+	}
+	
+	
+	public void deleteBook(Book deleteBook) {
+		bookList.remove(deleteBook);
+	}
+
+
+	
+	//책 중복 시
+	public void loadBookDB() {
+	}
+	public void saveBookDB() {
+	}
+	//자신의 booklist는 id로 검색된결과이다.
+
+	public void deleteBookList(List<Book> bookList, List<Book> searchList) {
+		// TODO Auto-generated method stub
+		bookList.removeAll(searchList);
+	}
+}

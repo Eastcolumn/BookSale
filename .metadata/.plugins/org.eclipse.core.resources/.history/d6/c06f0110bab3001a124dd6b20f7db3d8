@@ -1,0 +1,523 @@
+package controller;
+import java.util.Scanner;
+import model.Admin;
+import model.Book;
+import model.BookDBMS;
+import model.User;
+import model.UserDBMS;
+import view.View;
+
+public class Controller {
+	Book book = new Book();
+	BookDBMS bookList = new BookDBMS();
+	Admin admin = new Admin();
+	User user = new User();
+	UserDBMS userList = new UserDBMS();
+	InputController inputcontroller = new InputController();
+	View view = new View(book, bookList, admin, user, userList);
+	Scanner scan = new Scanner(System.in);
+	
+	public Controller() {
+		view.controller = this;
+	}
+
+	// user
+	public void front() {
+		userList.conductDeserializing();
+		bookList.conductDeserializing();
+		view.front();.
+	}
+
+	public void frontInput(String select) {
+		if (select.equals("1") == true) {
+			loginInput();
+		} else if (select.equals("2") == true) {
+			view.joinInput();
+		}  else if (select.equals("3") == true) {
+		}
+		else {
+			view.error();
+			front();
+		}
+	}
+//이메일 폰번 예외처리 안함.
+	public void join(String id, String password, String name, String phoneNumber, String email) {
+		if (id.equals("admin")) {
+			view.joinFailAdmin();
+			view.front();
+		}
+		else if(userList.checkID(id)) {
+			if(inputcontroller.checkLengthZero(password)&&inputcontroller.checkLengthZero(name)&&inputcontroller.checkISBN(phoneNumber)&&inputcontroller.checkLengthZero(email)) {
+				userList.join(id, password, name, phoneNumber, email);
+				userList.conductSerializing();
+				view.join();
+			}
+			else {
+				view.error();
+				view.front();
+			}
+		}
+		else {
+			view.joinFailID();
+			view.front();
+			}
+	}
+	//회원가입 1.admin으로 불가능 2.존재하는아이디일경우+정보입력 안할경우 불가능 3.성공
+	public void loginInput() {
+		view.loginInput();
+	}
+
+	public void login(String id, String password) {
+		if (id.equals(admin.getId()) && password.equals(admin.getPassword())) {
+			user.setId(admin.getId());
+			view.adminMenu();
+		} else {
+			if (userList.login(id, password)) {
+				user.setId(id);
+				user.setEmail(userList.getEmail(id));
+				view.menu();
+			} else{
+				view.loginFail();
+				view.front();
+			}
+		}
+	}
+	//로그인 1.관리자 로그인, 아이디셋  2.일반 로그인, 아이디,이메일셋  3.실패
+	public void menu(String select) {
+		if (select.equals("1")) {
+			view.search();
+		} else if (select.equals("2")) {
+			view.register();
+		} else if (select.equals("3")) {
+			view.myList();
+		} else if (select.equals("4")) {
+			logout();
+		} else {
+			view.error();
+			view.menu();
+		}
+	}
+
+	
+	//year체크 검토&&book.checkYear(year), isbn &&book.checkISBN(ISBN), price
+	public void register(String title, String publisher, String ISBN, String author, String year, String price, String quality) {
+		
+		if(inputcontroller.checkLengthZero(title)&&inputcontroller.checkYear(year)&&inputcontroller.checkISBN(ISBN)&&inputcontroller.checkPrice(price)&&inputcontroller.checkquality(quality)){
+			bookList.insertBook(title, publisher, ISBN, author, year, price, quality, user.getId());
+			bookList.conductSerializing();
+			view.registerOK();
+			view.menu();
+		}
+		else{
+			view.error();
+			view.menu();
+		}
+	}
+	public void buy(String bookindex) {
+		String sellerID = null;
+
+		if(bookList.indexValid(bookindex, bookList.searchList)) {
+			sellerID = bookList.buyBook(bookindex);
+			if(sellerID==user.getId()) {
+				view.buyError();
+				view.searchAfter();
+			}else {
+				if(bookList.bookList.get(Integer.parseInt(bookindex)).getAvailable().equals("no")) {
+					view.notAvail();
+					view.menu();
+				}else {
+					String selleremail = userList.getEmail(sellerID);
+					bookList.bookList.get(Integer.parseInt(bookindex)).setAvailable("no");
+					bookList.conductSerializing();
+					view.buy(selleremail, user.getEmail());
+				}
+			}
+		}
+		else {
+			view.error();
+			view.searchAfter();
+		}
+	}
+	
+	public void myListOpen() {
+		bookList.searchID(user.getId());
+		if(bookList.searchList.size()==0) {
+			view.resultMissing();
+			view.menu();
+		}
+		else {
+			view.searchListView(bookList.searchList);
+			view.myListDo();
+		}
+
+	}
+	
+	public void myListDo(String select) {
+		if (select.equals("1")) {
+			view.modify();
+			view.myList();
+		} else if (select.equals("2")) {
+			view.delete();
+			view.myList();
+
+		} else if (select.equals("3")) {
+			view.menu();
+		} else {
+			view.error();
+			view.myList();
+		}
+	}
+
+	public void modify(String select, String title, String publisher, String author, String ISBN, String year,
+			String price, String quality) {
+		if(bookList.indexValid(select, bookList.searchList)) {
+			int selectInt = Integer.parseInt(select);
+			if(bookList.bookList.get(selectInt).getAvailable().equals("no")) {
+				view.notAvail();
+				view.myList();
+			}
+			else {
+				if(inputcontroller.checkLengthZero(title)&&inputcontroller.checkYear(year)&&inputcontroller.checkISBN(ISBN)&&inputcontroller.checkPrice(price)&&inputcontroller.checkquality(quality)){
+					Book modifybook = bookList.searchList.get(selectInt);
+					bookList.modifyBook(modifybook, title, publisher, author, ISBN, year, price, quality, user.getId());
+					bookList.searchID(user.getId());
+					bookList.conductSerializing();
+				}
+				else {
+					view.error();
+					view.myList();
+				}
+			}
+			
+		}
+		else {
+			view.error();
+			view.myList();
+		}
+	}
+
+	public void delete(String select) {
+		if(bookList.indexValid(select, bookList.searchList)) {
+			int selectInt = Integer.parseInt(select);
+			if(bookList.bookList.get(selectInt).getAvailable().equals("no")&&!user.getId().equals("admin")) {
+				view.notAvail();
+			}//관리자가 아니고 avail안하면 못판다
+			else if(bookList.bookList.get(selectInt).getAvailable().equals("yes")&&!user.getId().equals("admin")){
+				bookList.deleteBook(bookList.bookList.get(selectInt));
+				bookList.searchID(user.getId());
+				bookList.conductSerializing();
+				view.myList();
+			}
+			else {
+				bookList.deleteBook(bookList.bookList.get(selectInt));
+				bookList.searchID(user.getId());
+				bookList.conductSerializing();
+				view.searchListView(bookList.searchList);
+				view.adminMenu();
+			}
+		}
+		else {
+			view.error();
+			if(user.getId().equals("admin")) {
+				view.adminMenu();
+			}
+			else {
+				view.myList();
+			}
+		}
+	}
+	public void search(String select, String input) {
+		if(user.getId().equals("admin")) {
+			if (select.equals("1")) {
+				bookList.searchTitle(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);
+					view.searchAfterAdmin();
+				}
+			}
+			else if (select.equals("2")) {
+				bookList.searchISBN(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);
+					view.searchAfterAdmin();
+
+				}
+			}
+			else if (select.equals("3")) {
+				bookList.searchAuthor(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);	
+					view.searchAfterAdmin();
+
+				}
+			}
+			else if (select.equals("4")) {
+				bookList.searchID(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);
+					view.searchAfterAdmin();
+
+				}
+			}
+			else if (select.equals("5")) {
+				bookList.searchPublisher(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);
+					view.searchAfterAdmin();
+
+				}
+			}
+			else if (select.equals("6")) {
+				bookList.searchYear(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.adminMenu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);
+					view.searchAfterAdmin();
+
+				}
+			}
+			else if (select.equals("7")) {
+				view.adminMenu();
+			}
+			else {
+				view.error();
+				view.search();
+			}
+		}else {
+			if (select.equals("1")) {
+				bookList.searchTitle(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+
+					view.searchListView(bookList.searchList);
+					view.searchAfter();
+				}
+			}
+			else if (select.equals("2")) {
+				bookList.searchISBN(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+
+					view.searchListView(bookList.searchList);	
+					view.searchAfter();
+
+				}
+			}
+			else if (select.equals("3")) {
+				bookList.searchAuthor(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+
+					view.searchListView(bookList.searchList);	
+					view.searchAfter();
+
+				}
+			}
+			else if (select.equals("4")) {
+				bookList.searchID(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+
+					view.searchListView(bookList.searchList);			
+					view.searchAfter();
+
+				}
+			}
+			else if (select.equals("5")) {
+				bookList.searchPublisher(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+
+					view.searchListView(bookList.searchList);			
+					view.searchAfter();
+
+				}
+			}
+			else if (select.equals("6")) {
+				bookList.searchYear(input);
+				if(bookList.searchList.size()==0) {
+					view.resultMissing();
+					view.menu();
+				}
+				else {
+					view.searchTable();
+					view.searchListView(bookList.searchList);			
+					view.searchAfter();
+				}
+			}
+			else if (select.equals("7")) {
+				view.menu();
+			}
+			else {
+				view.error();
+				view.search();
+			}
+		}
+		
+	
+	}
+	
+	public void searchAfterSelect(String select) {
+		String bookindex;
+
+		if(select.equals("1")) {
+			view.requireIndex();
+			bookindex=scan.nextLine();
+			buy(bookindex);
+		}
+		else if(select.equals("2")){
+			view.menu();
+		}
+		else
+		{
+			view.error();
+			view.searchAfter();
+		}
+	}
+	
+	public void logout() {
+		user.setId(null);
+		user.setEmail(null);
+		view.front();
+	}
+
+	public void adminMenu(String select) {
+		if (select.equals("1")) {
+			view.search();
+		} else if (select.equals("2")) {
+			if(userList.UserList.size()==0) {
+				view.resultMissing();
+				view.adminMenu();
+			}else {
+				view.userListView();
+				view.userListMenu();
+			}
+			
+		} else if (select.equals("3")) {
+			view.front();
+		} else {
+			view.error();
+			view.adminMenu();
+		}
+	}
+
+	public void userListDo(String select) {
+		if (select.equals("1")) {
+			view.deleteUser();
+			view.userListMenu();
+		} else if (select.equals("2")) {
+			view.toggleUser();
+		} else if (select.equals("3")) {
+			view.adminMenu();
+		} else {
+			view.error();
+			view.userListMenu();
+		}
+	}
+
+	public void deleteUser(String index) {
+		
+		if(userList.indexValid(index, userList.UserList)){
+			int indexInt = Integer.parseInt(index);
+			if(userList.UserList.get(indexInt).getState().equals("deactivated")) {
+				String temp=userList.UserList.get(indexInt).getId();
+				userList.deleteUser(userList.UserList.get(indexInt));
+				bookList.searchID(temp);
+				userList.conductSerializing();
+				if(bookList.searchList.size()==0){
+					view.userListView();
+					view.userListMenu();
+				}else {
+					bookList.deleteBookList(bookList.bookList, bookList.searchList);
+					bookList.conductSerializing();
+					view.userListView();
+					view.userListMenu();
+				}
+			}
+			else {
+				view.error();
+				view.userListMenu();
+			}
+		}else {
+			view.error();
+			view.adminMenu();
+		}
+	}
+
+	public void toggleUser(String index) {
+		if(userList.indexValid(index, userList.UserList)) {
+			int indexInt = Integer.parseInt(index);
+			userList.toggleState(userList.UserList.get(indexInt));
+			view.userListView();
+			userList.conductSerializing();
+			view.userListMenu();
+		}
+		else {
+			view.error();
+			view.userListMenu();
+		}
+	}
+		
+	
+	
+
+	public void searchAfterAdmin(String select) {
+		if (select.equals("1")) {
+			view.delete();
+		} else if (select.equals("2")) {
+			view.adminMenu();
+		} else {
+			view.error();
+			view.userListMenu();
+		}	
+	}
+}

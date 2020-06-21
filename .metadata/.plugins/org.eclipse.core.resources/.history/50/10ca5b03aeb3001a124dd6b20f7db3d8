@@ -1,0 +1,139 @@
+package model;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserList implements Serializable {
+	public UserList(){
+	}
+	public static List<User> UserList = new ArrayList<User>();
+	private static final String USERLIST = "userlist";
+
+	public void join(String id, String password, String name, String phoneNumber, String email) {
+		User newUser = new User();
+		newUser.setId(id);
+		newUser.setPassword(password);
+		newUser.setName(name);
+		newUser.setPhoneNumber(phoneNumber);
+		newUser.setEmail(email);
+		UserList.add(newUser);
+	}
+	public boolean login(String id, String password) {
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).getId().equals(id)) {
+				if(UserList.get(i).getPassword().equals(password)) {
+					if(UserList.get(i).getState().equals("activated")) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		return false;
+	}
+	public String getEmail(String id) {
+		String email = null;
+		
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).getId().equals(id)) {
+				email= UserList.get(i).getEmail();
+			}
+		}
+		
+		return email;
+		
+	}
+	
+	public boolean checkID(String id) {
+		if(id.length()==0) {
+			return false;
+		}
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).getId().equals(id)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean indexValid(String index, List<User> userList) {
+			int okay=0;
+			
+			if(index.equals("\n")){
+				return true;
+			}
+			else if(index.length()==0) {
+				return false;
+			}
+			for(int i=0; i<index.length(); i++) {
+				char temp = index.charAt(i);
+				if('0'<=temp&&temp<='9') {
+				}else {
+					okay++;
+				}
+			}
+			if(okay==0) {
+				int indexInt = Integer.parseInt(index);
+				if(userList.size()-1<indexInt) {
+					return false;
+			}
+			else {
+				return true;
+			}	
+		}
+		return false;
+	}
+	
+	public void deleteUser(User deleteUser) {
+		UserList.remove(deleteUser);
+
+	}
+	
+	
+	//자신의 booklist는 id로 검색된결과이다.
+	
+	public void toggleState(User toggleUser) {
+		if(toggleUser.getState().equals("activated")) {
+			toggleUser.setState("deactivated");
+		}
+		else {
+			toggleUser.setState("activated");
+		}
+	}
+	
+	public static void conductSerializing() {
+		try {
+			FileOutputStream fos = new FileOutputStream(USERLIST);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			
+			out.writeObject(UserList);
+			out.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public static void conductDeserializing() {
+		try {
+			FileInputStream fis = new FileInputStream(USERLIST);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ObjectInputStream in = new ObjectInputStream(bis);
+			
+			UserList = (List<User>)in.readObject();
+
+			in.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+}

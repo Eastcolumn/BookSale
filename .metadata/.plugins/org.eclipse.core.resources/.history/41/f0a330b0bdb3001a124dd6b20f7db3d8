@@ -1,0 +1,128 @@
+package bookTrade.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import controller.Controller;
+import model.Admin;
+import model.Book;
+import model.BookDBMS;
+import model.User;
+import model.UserDBMS;
+import view.View;
+
+public class ControllerTest {
+	
+	Book book = null;
+	BookDBMS bookList = null;
+	Admin admin = null;
+	User user = null;
+	UserDBMS userList = null;
+	View view = new View(book, bookList, admin, user, userList);
+	Controller controller = new Controller();
+	
+	
+	@Test
+	public void testController() {
+	}
+
+	@Test
+	public void testFront() {
+		controller.front();
+		assertNull("front-bookList 로드 실패",bookList);
+		assertNull("front-userList 로드 실패",userList);
+	}
+
+	@Test
+	public void testFrontInput() {
+		
+	}
+
+	@Test
+	public void testJoin() {
+		int adminbefore=userList.UserList.size();
+		controller.join("admin", "1", "1", "1", "1");
+		int adminafter=userList.UserList.size();
+		assertEquals(adminbefore, adminafter);
+		//admin으로 실행하면 userlist 안늘어남
+		int userbefore=1;
+		System.out.println(userList.UserList.size());
+		controller.join("11", "1", "1", "1", "1");
+		int userafter=2;
+		System.out.println(userList.UserList.size());
+
+		assertEquals(adminbefore, adminafter);
+		//user 넣으면 1증가
+		
+	}
+
+	@Test
+	public void testLoginInput() {
+	}
+
+	@Test
+	public void testLogin() {
+	}
+
+	@Test
+	public void testMenu() {
+	}
+
+	@Test
+	public void testRegister() {
+	}
+
+	@Test
+	public void testBuy() {
+	}
+
+	@Test
+	public void testMyListOpen() {
+	}
+
+	@Test
+	public void testMyListDo() {
+	}
+
+	@Test
+	public void testModify() {
+	}
+
+	@Test
+	public void testDelete() {
+	}
+
+	@Test
+	public void testSearch() {
+	}
+
+	@Test
+	public void testSearchAfterSelect() {
+	}
+
+	@Test
+	public void testLogout() {
+	}
+
+	@Test
+	public void testAdminMenu() {
+	}
+
+	@Test
+	public void testUserListDo() {
+	}
+
+	@Test
+	public void testDeleteUser() {
+	}
+
+	@Test
+	public void testToggleUser() {
+	}
+
+	@Test
+	public void testSearchAfterAdmin() {
+	}
+
+}

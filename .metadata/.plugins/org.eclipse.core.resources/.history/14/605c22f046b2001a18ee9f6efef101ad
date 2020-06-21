@@ -1,0 +1,83 @@
+package bookTrade;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserList {
+	public UserList(){
+	}
+	public List<User> UserList = new ArrayList<User>();
+
+	public void join(String id, String password, String name, String phoneNumber, String email) {
+		User newUser = new User();
+		newUser.id=id;
+		newUser.password=password;
+		newUser.name=name;
+		newUser.phoneNumber=phoneNumber;
+		newUser.email=email;
+		UserList.add(newUser);
+	}
+	public boolean login(String id, String password) {
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).id.equals(id)) {
+				if(UserList.get(i).password.equals(password)) {
+					if(UserList.get(i).state.equals("activated")) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		return false;
+	}
+	public String getEmail(String id) {
+		String email = null;
+		
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).id.equals(id)) {
+				email= UserList.get(i).email;
+			}
+		}
+		
+		return email;
+		
+	}
+	
+	public boolean checkID(String id) {
+		
+		for(int i=0; i<UserList.size(); i++) {
+			if(UserList.get(i).id.equals(id)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+
+	
+	
+	public void deleteUser(User deleteUser) {
+		UserList.remove(deleteUser);
+	}
+	
+	
+	//자신의 booklist는 id로 검색된결과이다.
+	
+	public void toggleState(User toggleUser) {
+		if(toggleUser.state=="activated") {
+			toggleUser.state="deactivated";
+		}
+		else {
+			toggleUser.state="activated";
+
+		}
+	}
+	
+	public void loadUserDB() {
+	}
+	public void saveUserdDB() {
+	}
+	
+	
+}

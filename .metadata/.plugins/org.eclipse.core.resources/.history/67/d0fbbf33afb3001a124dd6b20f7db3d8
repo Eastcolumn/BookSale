@@ -1,0 +1,15 @@
+package bookTrade.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class controller {
+
+	@Test
+	public void testController() {
+		fail("Not yet implemented"); // TODO
+	}
+
+
+}
